@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Monitoring MQ-135</title>
+
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(
+            rgba(255, 240, 246, 0.85),
+            rgba(249, 168, 212, 0.85)
+          ),
+          url("https://images.unsplash.com/photo-1522383225653-ed111181a951");
+        background-size: cover;
+        background-position: center;
+        color: #4a044e;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .card {
+        background: rgba(255, 240, 246, 0.95);
+        padding: 34px 46px;
+        border-radius: 22px;
+        box-shadow: 0 25px 50px rgba(190, 24, 93, 0.35);
+        text-align: center;
+        min-width: 300px;
+        backdrop-filter: blur(4px);
+      }
+
+      h1 {
+        font-size: 20px;
+        margin-bottom: 14px;
+        color: #9d174d;
+      }
+
+      .value {
+        font-size: 52px;
+        font-weight: bold;
+        margin: 18px 0;
+        color: #be185d;
+      }
+
+      .status {
+        font-size: 14px;
+        padding: 8px 18px;
+        border-radius: 999px;
+        display: inline-block;
+        font-weight: 600;
+      }
+
+      /* STATUS WARNA */
+      .baik {
+        background: #f472b6;
+        color: #500724;
+      }
+
+      .sedang {
+        background: #fde047;
+        color: #422006;
+      }
+
+      .buruk {
+        background: #fb7185;
+        color: #7f1d1d;
+      }
+
+      .footer {
+        margin-top: 12px;
+        font-size: 11px;
+        color: #9d174d;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="card">
+      <h1>🌸 Kualitas Udara (MQ-135)</h1>
+      <div id="nilai" class="value">---</div>
+      <div id="status" class="status">Menunggu data...</div>
+    </div>
+
+    <!-- SCRIPT REALTIME -->
+    <script>
+      const firebaseURL =
+        "https://mq-135-b46df-default-rtdb.asia-southeast1.firebasedatabase.app/mq135.json";
+
+      function loadData() {
+        fetch(firebaseURL)
+          .then((res) => res.json())
+          .then((data) => {
+            document.getElementById("nilai").innerText = data.ppm;
+
+            const statusEl = document.getElementById("status");
+
+            if (data.status === "BAIK") {
+              statusEl.innerText = "Udara Baik";
+              statusEl.className = "status baik";
+            } else if (data.status === "SEDANG") {
+              statusEl.innerText = "Udara Sedang";
+              statusEl.className = "status sedang";
+            } else {
+              statusEl.innerText = "Udara Buruk";
+              statusEl.className = "status buruk";
+            }
+          })
+          .catch((err) => console.error("Gagal ambil data:", err));
+      }
+
+      setInterval(loadData, 2000);
+    </script>
+  </body>
+</html>
